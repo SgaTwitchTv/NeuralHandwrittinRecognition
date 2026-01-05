@@ -1,134 +1,182 @@
 ﻿using NeuralHandwritin.Core;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using System.Xml.Serialization;
 
 namespace NeuralHandwritin
 {
     public partial class DrawingForm : Form
     {
-        private Bitmap bmp = new Bitmap(28, 28);
+        private Panel panelDraw;
+        private Button btnDigitize;
+        private TextBox txtResult;
+        private Button btnClear;
+
+        private Bitmap bmp;
         private Graphics g;
         private Point lastPoint = Point.Empty;
         private NeuralNetwork nn;
 
         public DrawingForm(NeuralNetwork network)
         {
-            InitializeComponent();
             nn = network;
-            FormSetup();
+            SetupForm();
+            InitializeDrawing();
         }
 
-        private void FormSetup()
+        private void SetupForm()
+        {
+            // Form settings
+            this.Text = "Draw a Digit";
+            this.Size = new Size(400, 600);
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            this.StartPosition = FormStartPosition.CenterParent;
+            this.BackColor = Color.FromArgb(30, 30, 30); // dark background
+
+            // Drawing panel (big black square with border)
+            panelDraw = new Panel
+            {
+                Location = new Point(50, 30),
+                Size = new Size(300, 300),
+                BackColor = Color.Black,
+                BorderStyle = BorderStyle.Fixed3D
+            };
+            this.Controls.Add(panelDraw);
+
+            // DIGITIZE button
+            btnDigitize = new Button
+            {
+                Location = new Point(150, 350),
+                Size = new Size(100, 40),
+                Text = "DIGITIZE",
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                BackColor = Color.FromArgb(0, 122, 204),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            this.Controls.Add(btnDigitize);
+
+            // Result textbox
+            txtResult = new TextBox
+            {
+                Location = new Point(50, 410),
+                Size = new Size(300, 100),
+                Multiline = true,
+                Font = new Font("Segoe UI", 14),
+                TextAlign = HorizontalAlignment.Center,
+                ReadOnly = true,
+                BackColor = Color.FromArgb(40, 40, 40),
+                ForeColor = Color.LightGreen,
+                BorderStyle = BorderStyle.FixedSingle
+            };
+            this.Controls.Add(txtResult);
+
+            btnClear = new Button
+            {
+                Location = new Point(270, 350),
+                Size = new Size(80, 40),
+                Text = "CLEAR",
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                BackColor = Color.FromArgb(200, 50, 50),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            this.Controls.Add(btnClear);
+        }
+
+        private void InitializeDrawing()
         {
             bmp = new Bitmap(28, 28);
             g = Graphics.FromImage(bmp);
-            g.Clear(Color.Black);
+            ClearCanvas();
 
-            panel1.Paint += PanelDraw_Paint;
-            panel1.MouseDown += PanelDraw_MouseDown;
-            panel1.MouseMove += PanelDraw_MouseMove;
+            // Events
+            panelDraw.Paint += PanelDraw_Paint;
+            panelDraw.MouseDown += PanelDraw_MouseDown;
+            panelDraw.MouseMove += PanelDraw_MouseMove;
             btnDigitize.Click += BtnDigitize_Click;
-            btnClear.Click += BtnClear_Click;
+            btnClear.Click += (s, e) => ClearCanvas();
         }
 
-        //mouse events for drawing
+        private void ClearCanvas()
+        {
+            g.Clear(Color.Black);
+            panelDraw.Invalidate();
+            txtResult.Text = "";
+        }
+
+        private void PanelDraw_Paint(object sender, PaintEventArgs e)
+        {
+            e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+            e.Graphics.DrawImage(bmp, 0, 0, panelDraw.Width, panelDraw.Height);
+        }
+
         private void PanelDraw_MouseDown(object sender, MouseEventArgs e)
         {
-            float scaleX = 28f / panel1.Width;
-            float scaleY = 28f / panel1.Height;
-            lastPoint = new Point((int)(e.X * scaleX), (int)(e.Y * scaleY));
+            lastPoint = ScalePoint(e.Location);
         }
 
         private void PanelDraw_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
-                float scaleX = 28f / panel1.Width;
-                float scaleY = 28f / panel1.Height;
-                Point currentPoint = new Point((int)(e.X * scaleX), (int)(e.Y * scaleY));
-
-                using (Pen pen = new Pen(Color.White, 3))
+                Point current = ScalePoint(e.Location);
+                using (Pen pen = new Pen(Color.White, 5))
                 {
-                    g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias; // smooth lines
-                    g.DrawLine(pen, lastPoint, currentPoint);
+                    g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                    g.DrawLine(pen, lastPoint, current);
                 }
-
-                lastPoint = currentPoint;
-                panel1.Invalidate();
+                lastPoint = current;
+                panelDraw.Invalidate();
             }
         }
 
-        private void PanelDraw_Paint(object sender, PaintEventArgs e)
+        private Point ScalePoint(Point p)
         {
-            e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-            e.Graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
-            e.Graphics.DrawImage(bmp, 0, 0, panel1.Width, panel1.Height);
+            return new Point(
+                (int)(p.X * 28f / panelDraw.Width),
+                (int)(p.Y * 28f / panelDraw.Height)
+            );
         }
 
-        private void BtnClear_Click(object sender, EventArgs e)
-        {
-            g.Clear(Color.Black);
-            panel1.Invalidate();
-            txtResult.Text = "";
-        }
-
-        //the digitize button magic
         private void BtnDigitize_Click(object sender, EventArgs e)
         {
-            //convert bmp to 784 double array
-            double[] input = new double[28 * 28];
+            double[] input = new double[784];
+
             for (int y = 0; y < 28; y++)
             {
                 for (int x = 0; x < 28; x++)
                 {
-                    Color pixelColor = bmp.GetPixel(x, y);
-                    double gray = (pixelColor.R + pixelColor.G + pixelColor.B) / 3.0 / 255.0;
-                    input[y * 28 + x] = 1.0 - gray;
+                    Color pixel = bmp.GetPixel(x, y);
+                    double gray = (pixel.R + pixel.G + pixel.B) / 3.0 / 255.0;
+                    input[y * 28 + x] = gray; // white = high value (1.0), black = 0.0
                 }
             }
 
             double[] output = nn.Forward(input);
-            int predictedDigit = nn.PredictDigit(output);
+            int predicted = 0;
+            double maxConf = output[0];
+            for (int i = 1; i < 10; i++)
+            {
+                if (output[i] > maxConf)
+                {
+                    maxConf = output[i];
+                    predicted = i;
+                }
+            }
 
-            txtResult.Text = $"{predictedDigit}";
+            txtResult.Text = predicted.ToString();
+            txtResult.Font = new Font(txtResult.Font.FontFamily, 36, FontStyle.Bold);
         }
 
-
-        private void DrawingForm_Load(object sender, EventArgs e)
+        protected override void Dispose(bool disposing)
         {
-
-        }
-
-        private void panel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void btnClear_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnDigitize_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void txtResult_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnDraw_Click(object sender, EventArgs e)
-        {
-            DrawingForm drawForm = new DrawingForm(nn);
-            drawForm.ShowDialog();
+            if (disposing)
+            {
+                g?.Dispose();
+                bmp?.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }
