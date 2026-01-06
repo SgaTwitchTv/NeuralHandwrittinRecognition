@@ -121,7 +121,7 @@ namespace NeuralHandwritin
             if (e.Button == MouseButtons.Left)
             {
                 Point current = ScalePoint(e.Location);
-                using (Pen pen = new Pen(Color.White, 5))
+                using (Pen pen = new Pen(Color.White, 2))
                 {
                     g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
                     g.DrawLine(pen, lastPoint, current);
