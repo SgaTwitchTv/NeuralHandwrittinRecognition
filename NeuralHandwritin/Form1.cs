@@ -45,7 +45,7 @@ namespace NeuralHandwritin
                 var (trainImages, trainLabels) = await MnistLoader.LoadAsync(dataFolder, isTrain: true);
                 var (testImages, testLabels) = await MnistLoader.LoadAsync(dataFolder, isTrain: false);
 
-                nn = new NeuralNetwork(784, 100, 10); // your network
+                nn = new NeuralNetwork(784, 128, 10);
                 int trainCount = trainImages.Length; // full 60k for real training
 
                 lblStatus.Text = "Training started...";
@@ -55,7 +55,7 @@ namespace NeuralHandwritin
                 {
                     Random rand = new Random(0);
                     double learningRate = 0.3;
-                    int totalEpochs = 100000; // adjust as needed
+                    int totalEpochs = 200000; // adjust as needed
 
                     for (int epoch = 0; epoch < totalEpochs; epoch++)
                     {
