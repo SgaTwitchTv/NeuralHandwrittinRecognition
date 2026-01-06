@@ -41,6 +41,7 @@ public class NeuralNetwork
         return matrix;
     }
 
+    //we want to prevent all neurons from being identical at the start
     private void Randomize(double[] arr)
     {
         for (int i = 0; i < arr.Length; i++)
@@ -49,12 +50,13 @@ public class NeuralNetwork
         }
     }
 
-    //the sigmoid activation function
+    //the sigmoid activation function to make the patterns non-linear (guessing based on the probability)
     private double Sigmoid(double x)
     {
         return 1.0 / (1.0 + Math.Exp(-x));
     }
 
+    //derivative to calculate the error during backpropagation
     private double SigmoidDerivative(double x)
     {
         return x * (1 - x);
@@ -169,6 +171,7 @@ public class NeuralNetwork
         return target;
     }
 
+    //predict the digit based on the output array - the highest value is the most likeable digit
     public int PredictDigit(double[] output)
     {
         int maxIndex = 0;
