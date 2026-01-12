@@ -10,12 +10,87 @@ namespace NeuralHandwritin
         public Form1()
         {
             InitializeComponent();
+            SetupForm();
         }
+
         private void Form1_Load(object sender, EventArgs e)
         {
+            this.BackColor = Color.FromArgb(18, 18, 18);
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            this.Text = "Handwriting AI";
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.Size = new Size(900, 650);
+
+            this.ForeColor = Color.White; // affects new controls
+            foreach (Control ctrl in this.Controls)
+            {
+                if (ctrl is Label || ctrl is Button || ctrl is TextBox)
+                {
+                    ctrl.ForeColor = Color.White;
+                }
+            }
+
+            // Also apply to panel if you have one
+            foreach (Control pnl in this.Controls.OfType<Panel>())
+            {
+                foreach (Control child in pnl.Controls)
+                {
+                    if (child is Label || child is Button || child is TextBox)
+                    {
+                        child.ForeColor = Color.White;
+                    }
+                }
+            }
         }
+
+        private void SetupForm()
+        {
+            Panel pnlMain = new Panel
+            {
+                Dock = DockStyle.Fill,
+                BackColor = Color.FromArgb(30, 30, 30),
+                Padding = new Padding(40)
+            };
+            this.Controls.Add(pnlMain);
+
+            Label lblTitle = new Label
+            {
+                Text = "Handwriting Recognizer",
+                Font = new Font("Segoe UI", 32, FontStyle.Bold),
+                ForeColor = Color.White,
+                AutoSize = false,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Dock = DockStyle.Top,
+                Height = 100
+            };
+            pnlMain.Controls.Add(lblTitle);
+
+            // Left card - Status
+            Panel pnlStatus = new Panel
+            {
+                Location = new Point(0, 120),
+                Size = new Size(400, 400),
+                BackColor = Color.FromArgb(40, 40, 40),
+                BorderStyle = BorderStyle.None,
+                Padding = new Padding(20)
+            };
+            pnlMain.Controls.Add(pnlStatus);
+
+            // Right card - Controls
+            Panel pnlControls = new Panel
+            {
+                Location = new Point(420, 120),
+                Size = new Size(400, 400),
+                BackColor = Color.FromArgb(40, 40, 40),
+                BorderStyle = BorderStyle.None,
+                Padding = new Padding(20)
+            };
+            pnlMain.Controls.Add(pnlControls);
+        }
+
         private NeuralNetwork nn;
         private string dataFolder;
+
         private void btnSelectFolder_Click(object sender, EventArgs e)
         {
             using FolderBrowserDialog dialog = new FolderBrowserDialog();
@@ -27,6 +102,7 @@ namespace NeuralHandwritin
                 lblStatus.Text = "Folder selected. Ready to train";
             }
         }
+
         private void lblFolderPath_Click(object sender, EventArgs e)
         {
 

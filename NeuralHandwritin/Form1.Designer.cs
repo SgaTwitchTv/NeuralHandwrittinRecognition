@@ -38,18 +38,19 @@
             // 
             // btnSelectFolder
             // 
-            btnSelectFolder.Location = new Point(12, 98);
+            btnSelectFolder.BackColor = SystemColors.AppWorkspace;
+            btnSelectFolder.Location = new Point(12, 166);
             btnSelectFolder.Name = "btnSelectFolder";
             btnSelectFolder.Size = new Size(136, 29);
             btnSelectFolder.TabIndex = 0;
             btnSelectFolder.Text = "Select Folder";
-            btnSelectFolder.UseVisualStyleBackColor = true;
+            btnSelectFolder.UseVisualStyleBackColor = false;
             btnSelectFolder.Click += btnSelectFolder_Click;
             // 
             // lblFolderPath
             // 
             lblFolderPath.AutoSize = true;
-            lblFolderPath.Location = new Point(12, 75);
+            lblFolderPath.Location = new Point(12, 143);
             lblFolderPath.Name = "lblFolderPath";
             lblFolderPath.Size = new Size(136, 20);
             lblFolderPath.TabIndex = 1;
@@ -59,7 +60,7 @@
             // btnTrain
             // 
             btnTrain.Enabled = false;
-            btnTrain.Location = new Point(12, 181);
+            btnTrain.Location = new Point(12, 249);
             btnTrain.Name = "btnTrain";
             btnTrain.Size = new Size(94, 29);
             btnTrain.TabIndex = 2;
@@ -69,7 +70,7 @@
             // 
             // proggressBarTraining
             // 
-            proggressBarTraining.Location = new Point(12, 216);
+            proggressBarTraining.Location = new Point(12, 284);
             proggressBarTraining.Name = "proggressBarTraining";
             proggressBarTraining.Size = new Size(125, 29);
             proggressBarTraining.TabIndex = 3;
@@ -79,7 +80,7 @@
             // lblStatus
             // 
             lblStatus.AutoSize = true;
-            lblStatus.Location = new Point(388, 123);
+            lblStatus.Location = new Point(556, 172);
             lblStatus.Name = "lblStatus";
             lblStatus.Size = new Size(97, 20);
             lblStatus.TabIndex = 4;
@@ -90,7 +91,7 @@
             // 
             btnDraw.BackColor = SystemColors.AppWorkspace;
             btnDraw.Enabled = false;
-            btnDraw.Location = new Point(388, 146);
+            btnDraw.Location = new Point(556, 195);
             btnDraw.Name = "btnDraw";
             btnDraw.Size = new Size(94, 29);
             btnDraw.TabIndex = 5;
