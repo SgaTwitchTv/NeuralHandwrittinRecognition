@@ -164,6 +164,7 @@ public class NeuralNetwork
         }
     }
 
+    //OneHot for numbers
     public static double[] OneHot(int label, int size = 10)
     {
         double[] target = new double[size];
@@ -184,5 +185,28 @@ public class NeuralNetwork
         }
 
         return maxIndex;
+    }
+
+    //OneHot for letters: label 0 = A, 1 = B, ..., 25 = Z
+    public static double[] OneHotLetter(int label, int size = 26)
+    {
+        double[] target = new double[size];
+        target[label] = 1.0;
+        return target;
+    }
+
+    //predict returns char 'A' to 'Z'
+    public char PredictLetter(double[] output)
+    {
+        int maxIdx = 0;
+        for (int i = 1; i < output.Length; i++)
+        {
+            if (output[i] > output[maxIdx])
+            {
+                maxIdx = i;
+            }
+        }
+
+        return (char)('A' + maxIdx);  // 0 → 'A', 25 → 'Z'
     }
 }

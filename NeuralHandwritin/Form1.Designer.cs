@@ -59,13 +59,14 @@
             // 
             // btnTrain
             // 
+            btnTrain.BackColor = SystemColors.ControlDark;
             btnTrain.Enabled = false;
             btnTrain.Location = new Point(12, 249);
             btnTrain.Name = "btnTrain";
             btnTrain.Size = new Size(94, 29);
             btnTrain.TabIndex = 2;
             btnTrain.Text = "TRAIN";
-            btnTrain.UseVisualStyleBackColor = true;
+            btnTrain.UseVisualStyleBackColor = false;
             btnTrain.Click += btnTrain_Click;
             // 
             // proggressBarTraining
