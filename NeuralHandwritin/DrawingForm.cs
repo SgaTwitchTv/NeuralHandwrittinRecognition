@@ -165,6 +165,26 @@ namespace NeuralHandwritin
                 }
             }
 
+            if (maxConf > 0.8)
+            {
+                txtResult.ForeColor = Color.LightGreen;
+
+            }
+            else if (maxConf > 0.5)
+            {
+                txtResult.ForeColor = Color.Yellow;
+            }
+            else
+            {
+                txtResult.ForeColor = Color.Red;
+            }
+
+            if(maxConf < 0.5)
+            {
+                txtResult.Text = "Uncertain";
+                txtResult.Font = new Font(txtResult.Font.FontFamily, 24, FontStyle.Italic);
+                return;
+            }
             txtResult.Text = predicted.ToString();
             txtResult.Font = new Font(txtResult.Font.FontFamily, 36, FontStyle.Bold);
         }
