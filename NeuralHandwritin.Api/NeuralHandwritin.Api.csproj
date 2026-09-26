@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../NeuralHandwritin/NeuralNetwork.cs" Link="Core/NeuralNetwork.cs" />
+    <Compile Include="../NeuralHandwritin/MinstLoader.cs" Link="Data/MinstLoader.cs" />
+  </ItemGroup>
+</Project>
